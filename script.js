@@ -57,14 +57,12 @@ const timerFunction = (second)=>{
         Timer begins within an interval as the second counts down
         The dateFunc is called after each count down to refresh timer screen
     */
-    level = setInterval(() => {
-        second--;
+    level = setInterval(() => { 
         dateFunc(second);
-        
         if (second <= 0){ 
             clearInterval(level)
         }
-
+        second--;
     }, 1000);
 
     // The function is called inside the timerfunc to display expected end time
@@ -92,7 +90,7 @@ submit__button.addEventListener('click', (e)=>{
     e.preventDefault();
     let inptVal = document.querySelector('[name=minutes]');
     //console.log(inptVal.value);
-    const timerMinInSec = inptVal.value * 60;
+    const timerMinInSec = inptVal.value <= 0 ? 0 :  inptVal.value * 60;
     timerFunction(timerMinInSec);
 
 }); 
