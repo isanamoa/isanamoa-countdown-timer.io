@@ -3,25 +3,11 @@
 const dateFunc = (second) => {
     let timerCount = second * 1000;
     const startTime = new Date(timerCount) 
-    let startHour = startTime.getHours().toLocaleString(),
-    startMin = startTime.getMinutes().toLocaleString() < 10 ? `0${startTime.getMinutes().toLocaleString()}`: startTime.getMinutes().toLocaleString(),
-    startSec = startTime.getSeconds().toLocaleString() < 10 ? `0${startTime.getSeconds().toLocaleString()}`: startTime.getSeconds().toLocaleString();
-    
-    //console.log(startTime.getMinutes().toLocaleString())
-    //console.log(startTime.getSeconds().toLocaleString())
-    //console.log(startHour)
-    
-    let startHourOut = startHour < 10 ? `0${startHour}`: startHour;
+    const startHour = startTime.getHours(),
+    startMin = startTime.getMinutes() < 10 ? `0${startTime.getMinutes().toLocaleString()}`: startTime.getMinutes().toLocaleString(),
+    startSec = startTime.getSeconds() < 10 ? `0${startTime.getSeconds().toLocaleString()}`: startTime.getSeconds().toLocaleString();  
     const display__time_left = document.querySelector('.display__time-left'); 
-    display__time_left.textContent = startHour <= 0 ? `${startMin}:${startSec}` : `${startHourOut}:${startMin}:${startSec}`;
-
-    if (startHour === '1' && startMin >= 1){
-        display__time_left.textContent = `${startHourOut}:${startMin}:${startSec}`;
-    }
-    if (startHour === '1' && startMin < 1) {
-        display__time_left.textContent = `${startHour * 60}:${startSec}`;
-    }
-    
+    display__time_left.textContent = startHour >= 1 ? `${startHour * 60 + startTime.getMinutes()}:${startSec}` : `${startMin}:${startSec}`;
 
 }
 
@@ -31,24 +17,20 @@ const dateFunc = (second) => {
 */
 const timerEndFunc = (second) => {
     let timeInSeconds = Date.now();
-    //console.log(timeInSeconds)
-    timeInSeconds += (second * 1000);  
-    //console.log(timeInSeconds) 
+    timeInSeconds += (second * 1000) 
     const endTime = new Date(timeInSeconds) 
-    //console.log(endTime.getHours().toLocaleString()-12)
-    const hour = endTime.getHours().toLocaleString() <= 12 ? endTime.getHours().toLocaleString() : endTime.getHours().toLocaleString() - 12,
-        minutes =  endTime.getMinutes().toLocaleString() < 10 ? `0${endTime.getMinutes().toLocaleString()}` : endTime.getMinutes().toLocaleString();
-    //console.log(endTime.getMinutes().toLocaleString());
+    const hour = endTime.getHours().toLocaleString() <= 12 ? endTime.getHours().toLocaleString() : endTime.getHours().toLocaleString() - 12;
+    const minutes =  endTime.getMinutes().toLocaleString() < 10 ? `0${endTime.getMinutes().toLocaleString()}` : endTime.getMinutes().toLocaleString();
     
     const display__end_time = document.querySelector('.display__end-time'); 
     display__end_time.textContent = endTime.getHours().toLocaleString() < 12 ? `Be Back At ${hour}:${minutes} AM`: `Be Back At ${hour}:${minutes} PM`;
 }
 
 // Lines of code is the count down timer function call on button click
-let level;
+let resetInterval;
 const timerFunction = (second)=>{
     //Clears the timer on initial click
-    clearInterval(level);
+    clearInterval(resetInterval);
 
     // The dateFunc is called to set the timer screen
     dateFunc(second);
@@ -57,10 +39,10 @@ const timerFunction = (second)=>{
         Timer begins within an interval as the second counts down
         The dateFunc is called after each count down to refresh timer screen
     */
-    level = setInterval(() => { 
+    resetInterval = setInterval(() => { 
         dateFunc(second);
         if (second <= 0){ 
-            clearInterval(level)
+            clearInterval(resetInterval)
         }
         second--;
     }, 1000);
@@ -89,9 +71,7 @@ const submit__button = document.querySelector('[name=submitCustomForm]');
 submit__button.addEventListener('click', (e)=>{
     e.preventDefault();
     let inptVal = document.querySelector('[name=minutes]');
-    //console.log(inptVal.value);
-    const timerMinInSec = inptVal.value <= 0 ? 0 :  inptVal.value * 60;
-    timerFunction(timerMinInSec);
-
+    let timerMinInSec = inptVal.value <= 0 ? 0 :  inptVal.value * 60;
+    timerFunction(timerMinInSec)
 }); 
 
