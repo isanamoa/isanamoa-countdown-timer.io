@@ -1,77 +1,54 @@
-
-// Lines of code refresh the time on each count down
-const dateFunc = (second) => {
-    let timerCount = second * 1000;
-    const startTime = new Date(timerCount) 
-    const startHour = startTime.getHours(),
-    startMin = startTime.getMinutes() < 10 ? `0${startTime.getMinutes().toLocaleString()}`: startTime.getMinutes().toLocaleString(),
-    startSec = startTime.getSeconds() < 10 ? `0${startTime.getSeconds().toLocaleString()}`: startTime.getSeconds().toLocaleString();  
-    const display__time_left = document.querySelector('.display__time-left'); 
-    display__time_left.textContent = startHour >= 1 ? `${startHour * 60 + startTime.getMinutes()}:${startSec}` : `${startMin}:${startSec}`;
-
-}
-
-/*
-    The lines of code indicate on the screen the time Countdown Time
-    is expected to stop.
-*/
-const timerEndFunc = (second) => {
-    let timeInSeconds = Date.now();
-    timeInSeconds += (second * 1000) 
-    const endTime = new Date(timeInSeconds) 
-    const hour = endTime.getHours().toLocaleString() <= 12 ? endTime.getHours().toLocaleString() : endTime.getHours().toLocaleString() - 12;
-    const minutes =  endTime.getMinutes().toLocaleString() < 10 ? `0${endTime.getMinutes().toLocaleString()}` : endTime.getMinutes().toLocaleString();
-    
-    const display__end_time = document.querySelector('.display__end-time'); 
-    display__end_time.textContent = endTime.getHours().toLocaleString() < 12 ? `Be Back At ${hour}:${minutes} AM`: `Be Back At ${hour}:${minutes} PM`;
-}
-
-// Lines of code is the count down timer function call on button click
+const display__end_time = document.querySelector(".display__end-time");
+const display__time_left = document.querySelector(".display__time-left");
+const timer__button = document.querySelectorAll(".timer__button");
+const submit__button = document.querySelector("[name=submitCustomForm]");
+let inptVal = document.querySelector("[name=minutes]");
 let resetInterval;
-const timerFunction = (second)=>{
-    //Clears the timer on initial click
-    clearInterval(resetInterval);
 
-    // The dateFunc is called to set the timer screen
-    dateFunc(second);
+const timerFunction = (second) => {
+  clearInterval(resetInterval);
+  displayTimer(second);
 
-    /*
-        Timer begins within an interval as the second counts down
-        The dateFunc is called after each count down to refresh timer screen
-    */
-    resetInterval = setInterval(() => { 
-        dateFunc(second);
-        if (second <= 0){ 
-            clearInterval(resetInterval)
-        }
-        second--;
-    }, 1000);
+  resetInterval = setInterval(() => {
+    second--;
+    if (second <= 0) {
+      clearInterval(resetInterval);
+    }
+    displayTimer(second);
+  }, 1000);
 
-    // The function is called inside the timerfunc to display expected end time
-    timerEndFunc(second)
+  let currentTime = Date.now();
+  currentTime += second * 1000;
+
+  displayTimerEnding(currentTime);
+};
+
+const displayTimer = (second) => {
+  const timerTime = new Date(second * 1000);
+  const hour = timerTime.getHours();
+  const minutes = timerTime.getMinutes();
+  const seconds = timerTime.getSeconds();
+  const display = `${hour >= 1 ? hour * 60 + minutes : minutes}:${ seconds < 10 ? "0" : "" }${seconds}`;
+  display__time_left.textContent = display;
+};
+
+const displayTimerEnding = (currentTime) => {
+  const endTimer = new Date(currentTime);
+  const endingHour = endTimer.getHours();
+  const endingMinutes = endTimer.getMinutes();
+  const display = `Be Back At ${ endingHour < 12 ? endingHour : endingHour % 12 }:${endingMinutes}`;
+  display__end_time.textContent = display;
+};
+function handlingButtonData() {
+  const button_data = parseInt(this.getAttribute("data-time"));
+  timerFunction(button_data);
 }
-
-/* 
-    The lines of code access all buttons that have same class name and
-    It the loops through the buttons and display results base on each button's click
-*/   
-const timer__button = document.querySelectorAll('.timer__button');
-timer__button.forEach(button => {
-    button.addEventListener('click', 
-    ()=>timerFunction(button.getAttribute('data-time'))
-    );
-}); 
-
-/*
-    The lines of code access a button with its attribute name and
-    then listens to onclick event of the button the display 
-    minutes entered by user
-*/ 
-const submit__button = document.querySelector('[name=submitCustomForm]');
-submit__button.addEventListener('click', (e)=>{
-    e.preventDefault();
-    let inptVal = document.querySelector('[name=minutes]');
-    let timerMinInSec = inptVal.value <= 0 ? 0 :  inptVal.value * 60;
-    timerFunction(timerMinInSec)
-}); 
-
+timer__button.forEach((button) => {
+  button.addEventListener("click", handlingButtonData);
+});
+submit__button.addEventListener("click", (e) => {
+  e.preventDefault();
+  const timerMinInSec = inptVal.value <= 0 ? 1 : inptVal.value * 60;
+  timerFunction(timerMinInSec);
+  inptVal.value = "";
+});
