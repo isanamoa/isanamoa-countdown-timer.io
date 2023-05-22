@@ -36,7 +36,7 @@ const displayTimerEnding = (currentTime) => {
   const endTimer = new Date(currentTime);
   const endingHour = endTimer.getHours();
   const endingMinutes = endTimer.getMinutes();
-  const display = `Be Back At ${ endingHour < 12 ? endingHour : endingHour % 12 }:${endingMinutes}`;
+  const display = `Be Back At ${ endingHour <= 12 ? endingHour : endingHour % 12 }:${endingMinutes}`;
   display__end_time.textContent = display;
 };
 function handlingButtonData() {
